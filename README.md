@@ -145,7 +145,6 @@ Future tools planned for inclusion:
 - WHOIS record retrieval
 - Domain reputation scoring
 - SSL certificate analysis
-- Simple network scanning capabilities
 
 ## Contributing
 
