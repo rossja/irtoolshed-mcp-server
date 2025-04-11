@@ -1,6 +1,5 @@
 # asnlookup.py
-import subprocess
-from subprocess import CalledProcessError
+import cymruwhois
 
 def asnlookup(ip):
     """
@@ -20,24 +19,23 @@ def asnlookup(ip):
     }
 
     try:
-        cmd_result = subprocess.run(
-            ["whois", "-h", "whois.cymru.com", ip],
-            capture_output=True,
-            text=True,
-            check=True
-        )
+        # Use the cymruwhois library to get ASN information
+        client = cymruwhois.Client()
+        response = client.lookup(ip)
 
-        # Parse the output - skip the header line and get the data line
-        lines = cmd_result.stdout.strip().split('\n')
-        if len(lines) >= 2:  # Make sure we have at least 2 lines (header + data)
-            data_line = lines[1]  # Get the second line (index 1)
-            parts = data_line.split('|')
-            if len(parts) >= 3:
-                result_dict["ip_addr"] = parts[1].strip()
-                result_dict["as_number"] = parts[0].strip()
-                result_dict["as_name"] = parts[2].strip()
-    except (CalledProcessError, Exception):
+        # Update the result dictionary with the ASN information
+        if response:
+            result_dict["ip_addr"] = ip
+            result_dict["as_number"] = str(response.asn)
+            result_dict["as_name"] = response.owner
+    except Exception as e:
         # The default error values are already set in result_dict
-        pass
+        print(f"Error looking up ASN for IP: {ip}")
+        print(f"Exception: {str(e)}")
 
     return result_dict
+
+if __name__ == "__main__":
+    print(f"running asnlookup as main")
+    result = asnlookup("8.8.8.8")
+    print(f"Result: {result}")
