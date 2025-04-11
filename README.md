@@ -31,6 +31,36 @@ The ASN lookup tool returns information about an IP address including:
 - The AS number associated with the IP address
 - The name of the organization that owns the AS number
 
+### DNS Lookup Tool
+
+The DNS lookup tool provides DNS record information for domains:
+- Supports multiple record types (A, AAAA, MX, NS, TXT)
+- Returns formatted DNS records
+- Handles both IPv4 and IPv6 queries
+
+### WHOIS Lookup Tool
+
+The WHOIS lookup tool retrieves domain registration information:
+- Domain ownership details
+- Registration dates
+- Nameserver information
+- Registrar details
+
+### Geolocation Tool
+
+The IP geolocation tool provides location information using MaxMind's GeoLite2 database:
+- Country and city-level location data
+- Latitude and longitude coordinates
+- Network information
+- Timezone data
+
+Note: The geolocation tool requires a MaxMind license key. You can:
+1. Get a free key from: https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
+2. Either:
+   - Set the MAXMIND_LICENSE_KEY environment variable
+   - Provide it as a parameter when using the tool
+   - Enter it when prompted
+
 More tools will be added in future releases.
 
 ## Prerequisites
@@ -99,36 +129,214 @@ Example output:
 }
 ```
 
+### DNS Lookup Tool
+
+When connected to an MCP client such as Claude Desktop, you can use the DNS
+lookup tool by providing a domain:
+
+```
+dnslookup("example.com")
+```
+
+Example output:
+```json
+{
+    "domain": "example.com",
+    "record_type": "A",
+    "record_value": "93.184.216.34"
+}
+```
+
+### WHOIS Lookup Tool
+
+When connected to an MCP client such as Claude Desktop, you can use the WHOIS
+lookup tool by providing a domain:
+
+```
+whoislookup("example.com")
+```
+
+Example output:
+```json
+{
+    "domain": "example.com",
+    "ownership_details": "Google LLC",
+    "registration_date": "2004-04-26",
+    "nameserver_information": "ns1.google.com",
+    "registrar_details": "MarkMonitor Inc."
+}
+```
+
+### Geolocation Tool
+
+When connected to an MCP client such as Claude Desktop, you can use the geolocation
+tool by providing an IP address:
+
+```
+geolocation("8.8.8.8")
+```
+
+Example output:
+```json
+{
+    "ip_addr": "8.8.8.8",
+    "country": "US",
+    "city": "Mountain View",
+    "latitude": 37.40599,
+    "longitude": -122.078514,
+    "network": "AS15169 Google LLC",
+    "timezone": "America/Los_Angeles"
+}
+```
+
 ## Error Handling
 
-Each tool has its own error handling approach. Generally, tools will return
-specific error fields or indicators when a lookup fails:
+Each tool follows a consistent error handling pattern:
 
-For the ASN lookup tool:
+General error response format:
+```json
+{
+    "status": "error",
+    "error": "Detailed error message",
+    "query": "Original query value"
+}
+```
+
+Tool-specific error examples:
+
+ASN Lookup:
 ```json
 {
     "ip_addr": "<queried-ip>",
-    "as_number": "error",
-    "as_name": "error"
+    "status": "error",
+    "error": "Invalid IP address format"
+}
+```
+
+DNS Lookup:
+```json
+{
+    "domain": "<queried-domain>",
+    "record_type": "<requested-type>",
+    "status": "error",
+    "error": "DNS resolution failed"
+}
+```
+
+WHOIS Lookup:
+```json
+{
+    "domain": "<queried-domain>",
+    "status": "error",
+    "error": "WHOIS server not available"
+}
+```
+
+Geolocation:
+```json
+{
+    "ip_addr": "<queried-ip>",
+    "status": "error",
+    "error": "MaxMind database not found or license key invalid"
 }
 ```
 
 ## Project Structure
 
-- `src/mcp_server.py`: The main MCP server implementation
-- `src/asnlookup.py`: The ASN lookup functionality
-- `src/__init__.py`: Makes the directory a Python package
-- `pyproject.toml`: Project configuration and dependencies
+The project follows a standard Python package structure:
+
+```
+irtoolshed_mcp_server/     # Main package directory
+├── __init__.py           # Package initialization
+├── asnlookup.py         # ASN lookup functionality
+├── dnslookup.py         # DNS lookup functionality
+├── geolookup.py         # Geolocation functionality
+├── mcp_server.py        # Main MCP server implementation
+└── whoislookup.py       # WHOIS lookup functionality
+
+tests/                    # Test directory
+├── test_asnlookup.py    # ASN lookup tests
+├── test_dnslookup.py    # DNS lookup tests
+├── test_geolookup.py    # Geolocation tests
+└── test_whoislookup.py  # WHOIS lookup tests
+```
+
+## Development
+
+### Setting Up Development Environment
+
+1. Clone this repository:
+```bash
+git clone <repository-url>
+cd ir-toolshed-mcp-server
+```
+
+2. Create a virtual environment and install dependencies:
+```bash
+uv venv
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+uv pip install -e ".[dev]"
+```
+
+### Running Tests
+
+To run the test suite:
+```bash
+uv run pytest
+```
+
+This will:
+- Run all tests in the `tests/` directory
+- Show test coverage information
+- Display detailed output for any failures
+
+Note: Some tests require additional configuration:
+- Geolocation tests require a MaxMind GeoLite2 database and license key
+- WHOIS tests may fail if the WHOIS service is unavailable
+
+### Code Quality
+
+The project uses several tools to maintain code quality:
+
+- Format code with Black:
+```bash
+uv run black .
+```
+
+- Sort imports with isort:
+```bash
+uv run isort .
+```
+
+- Run type checking with mypy:
+```bash
+uv run mypy .
+```
+
+- Run linting with ruff:
+```bash
+uv run ruff .
+```
 
 ## Roadmap
 
+Completed:
+✓ ASN lookups
+✓ DNS record lookups (A, AAAA, MX, etc.)
+✓ WHOIS record retrieval
+✓ IP geolocation services
+
 Future tools planned for inclusion:
-- DNS record lookups (A, AAAA, MX, etc.)
-- Reverse DNS lookups
-- IP geolocation services
-- WHOIS record retrieval
 - Domain reputation scoring
 - SSL certificate analysis
+- Network port scanning
+- Threat intelligence integration
+- Passive DNS history
+- Email security analysis (SPF, DKIM, DMARC)
+- BGP route analysis
+- Network traffic visualization
+- Malware hash lookups
+- URL reputation checking
 
 ## Contributing
 
