@@ -118,6 +118,21 @@ wheels = [
 ]
 
 [[package]]
+name = "irtoolshed-mcp-server"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "cymruwhois" },
+    { name = "mcp", extra = ["cli"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cymruwhois", specifier = ">=1.6" },
+    { name = "mcp", extras = ["cli"], specifier = ">=1.6.0" },
+]
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -152,21 +167,6 @@ wheels = [
 cli = [
     { name = "python-dotenv" },
     { name = "typer" },
-]
-
-[[package]]
-name = "mcp-asnlookup-server"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "cymruwhois" },
-    { name = "mcp", extra = ["cli"] },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "cymruwhois", specifier = ">=1.6" },
-    { name = "mcp", extras = ["cli"], specifier = ">=1.6.0" },
 ]
 
 [[package]]
