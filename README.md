@@ -159,7 +159,7 @@ Please follow these steps:
 
 ## License
 
-[Add your license information here]
+Apache 2.0
 
 ## Security Considerations
 
