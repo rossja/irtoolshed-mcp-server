@@ -37,22 +37,6 @@ More tools will be added in future releases.
 
 - Python 3.8 or newer (3.13+ recommended)
 - [uv](https://github.com/astral-sh/uv) Python package manager
-- The `whois` command-line tool must be installed on your system
-
-### Installing whois
-
-#### On Ubuntu/Debian:
-```bash
-sudo apt-get install whois
-```
-
-#### On macOS:
-```bash
-brew install whois
-```
-
-#### On Windows:
-Download a Windows whois tool or use WSL (Windows Subsystem for Linux).
 
 ## Installation
 
