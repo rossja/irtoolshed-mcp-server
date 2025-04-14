@@ -2,7 +2,7 @@
 
 A comprehensive Model Context Protocol (MCP) server providing incident response
 and network analysis tools for security professionals. This server allows AI
-models like Claude to perform various network-related lookups and analyses to
+agents like Claude to perform various network-related lookups and analyses to
 assist with security investigations.
 
 ## Overview
